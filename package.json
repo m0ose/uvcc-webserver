@@ -1,0 +1,22 @@
+{
+  "name": "uvcc-webserver",
+  "version": "1.0.0",
+  "description": "A web server to control webcam settings on any platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "usb",
+    "uvc",
+    "uvcc",
+    "webcamera"
+  ],
+  "author": "cody@simtable.com",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "git": "^0.1.5",
+    "uvc-control": "https://github.com/joelpurra/node-uvc-control.git"
+  }
+}
