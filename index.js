@@ -5,9 +5,9 @@
  */
 
 
-
-const express = require('express')
-const UVCControl = require('uvc-control')
+import { timeoutPromise, getAllControls } from './utils.js'
+import express from 'express'
+import UVCControl from 'uvc-control'
 
 /**
  * state variables
@@ -53,50 +53,14 @@ async function getCameraByIdentifier(identifier) {
     const vid = device.deviceDescriptor.idVendor
     const pid = device.deviceDescriptor.idProduct
     const deviceAddress = device.deviceAddress
-    const arguments = { vid, pid, deviceAddress }
-    console.log('making new camera', arguments)
-    const cam = new UVCControl(arguments)
+    const params = { vid, pid, deviceAddress }
+    console.log('making new camera', params)
+    const cam = new UVCControl(params)
     cameras.push(cam)
     // take a short break because a requests to this device will not work until something internal is ready
     // TODO figure out if there is some event or variable to look for that says it is ready.
     await timeoutPromise(80)
     return cam
-}
-
-/**
- * Get the value and range of the supported controls. 
- * 
- * @param {UVCControl} cam 
- * @returns {JSON}
- */
-async function getAllControls(cam) {
-    const result = []
-    const sc = cam.supportedControls
-    for (let i in sc) {
-        const ctl = sc[i]
-        const v = { i, ctl }
-        const val = await cam.get(ctl)
-        v.val = val
-        try {
-            const range = await cam.range(ctl)
-            v.range = range
-        } catch (err) {
-            console.log('range request not supported, ', ctl)
-        }
-        result.push(v)
-    }
-    return result
-}
-
-/**
- * helper to slow functions down
- * @param {number} timeout 
- * @returns 
- */
-function timeoutPromise(timeout = 1000) {
-    return new Promise((resolve, reject) => {
-        setTimeout(resolve, timeout)
-    })
 }
 
 app.get('/', (req, res) => {
@@ -139,7 +103,8 @@ app.post('/boo', async (req, res) => {
     res.send("hello")
 })
 
-// TODO make this a POST instead
+// TODO make this a POST instead. It doesn't seem to get called with post
+// app.post('/set/:deviceIdentifier/:control/:values', async (req, res) => {
 app.get('/set/:deviceIdentifier/:control/:values', async (req, res) => {
     let values = req.params.values.split(',')
     console.log('setting', req.params.control, values)

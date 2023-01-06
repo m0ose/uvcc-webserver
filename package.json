@@ -12,6 +12,7 @@
     "uvcc",
     "webcamera"
   ],
+  "type":"module",
   "author": "cody@simtable.com",
   "license": "ISC",
   "dependencies": {
