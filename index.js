@@ -106,7 +106,7 @@ app.get('/', (req, res) => {
 app.get('/devices', async (req, res) => {
     console.time('devices')
     const devices = await UVCControl.discover() // this is slow ~250ms
-    res.send(JSON.stringify(devices, 0, 2))
+    res.send(devices)
     console.timeEnd('devices')
 })
 
@@ -121,8 +121,6 @@ app.get('/controls/:deviceIdentifier', async (req, res) => {
         res.status(500).send(err)
         return
     }
-
-
 })
 
 app.get('/get/:deviceIdentifier/:control', async (req, res) => {
@@ -136,13 +134,19 @@ app.get('/get/:deviceIdentifier/:control', async (req, res) => {
     }
 })
 
-app.post('/set/:deviceIdentifier/:control/:values', async (req, res) => {
+app.post('/boo', async (req, res) => {
+    console.log('booooo')
+    res.send("hello")
+})
+
+// TODO make this a POST instead
+app.get('/set/:deviceIdentifier/:control/:values', async (req, res) => {
     let values = req.params.values.split(',')
     console.log('setting', req.params.control, values)
     try {
         const cam = await getCameraByIdentifier(req.params.deviceIdentifier)
         const retVals = await cam.set(req.params.control, values)
-        res.send(JSON.stringify([retVals]))
+        res.send(retVals)
     } catch (err) {
         res.status(500).send(err)
     }
