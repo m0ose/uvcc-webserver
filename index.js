@@ -117,6 +117,6 @@ app.get('/set/:deviceIdentifier/:control/:values', async (req, res) => {
     }
 })
 
-app.listen(3000, () => {
-    console.log('Server listening on port 3000')
+app.listen(3456, () => {
+    console.log('Server listening on port 3456')
 })

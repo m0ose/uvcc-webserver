@@ -12,6 +12,7 @@
     "uvcc",
     "webcamera"
   ],
+  "engines": {"node":">=18.0"},
   "type":"module",
   "author": "cody@simtable.com",
   "license": "ISC",
