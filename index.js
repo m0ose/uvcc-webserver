@@ -1,19 +1,26 @@
+/**
+ * A web server to control the settings for uvc based webcams(most USB cameras)
+ * 
+ * _cody_s 2023
+ */
+
+
+
 const express = require('express')
 const UVCControl = require('uvc-control')
 
+/**
+ * state variables
+ */
 const app = express()
-
 const cameras = []
 
 /**
+ * Get camera by either name, adress, or vendor ID
+ * Cache cameras because making them is expensive.
  * 
  * @param {String} identifier 
- * @returns {UVCControl}
-// check the port first, id ,maker,
-// default to first if there is only one, or identifier is 0, or undefined
-//    need to check if port 0 is used. If so -1 or null
-//    throw error if not found or no usb cameras are available. 
-// cache the cameras .  
+ * @returns {UVCControl}  
 */
 async function getCameraByIdentifier(identifier) {
     // check cached cameras
@@ -24,9 +31,10 @@ async function getCameraByIdentifier(identifier) {
         if (d.deviceDescriptor.idVendor == identifier) return true
         return false
     })
-    if(existingCam){
+    if (existingCam) {
         return existingCam
     }
+    // Create camera
     // look through devices. This is slow and seems to hinder the subsequent requests if they happen too soon 
     const devices = await UVCControl.discover()
     if (!devices || devices.length <= 0) {
@@ -49,22 +57,30 @@ async function getCameraByIdentifier(identifier) {
     console.log('making new camera', arguments)
     const cam = new UVCControl(arguments)
     cameras.push(cam)
+    // take a short break because a requests to this device will not work until something internal is ready
+    // TODO figure out if there is some event or variable to look for that says it is ready.
     await timeoutPromise(80)
     return cam
 }
 
-async function getAllControls(cam){
-    const result=[]
+/**
+ * Get the value and range of the supported controls. 
+ * 
+ * @param {UVCControl} cam 
+ * @returns {JSON}
+ */
+async function getAllControls(cam) {
+    const result = []
     const sc = cam.supportedControls
-    for(let i in sc){
+    for (let i in sc) {
         const ctl = sc[i]
-        const v = {i, ctl}
+        const v = { i, ctl }
         const val = await cam.get(ctl)
-        v.val = val 
-        try{
+        v.val = val
+        try {
             const range = await cam.range(ctl)
             v.range = range
-        }catch(err){
+        } catch (err) {
             console.log('range request not supported, ', ctl)
         }
         result.push(v)
@@ -72,8 +88,13 @@ async function getAllControls(cam){
     return result
 }
 
-function timeoutPromise(timeout=1000){
-    return new Promise((resolve, reject)=>{
+/**
+ * helper to slow functions down
+ * @param {number} timeout 
+ * @returns 
+ */
+function timeoutPromise(timeout = 1000) {
+    return new Promise((resolve, reject) => {
         setTimeout(resolve, timeout)
     })
 }
@@ -83,7 +104,6 @@ app.get('/', (req, res) => {
 })
 
 app.get('/devices', async (req, res) => {
-    console.log('devices called')
     console.time('devices')
     const devices = await UVCControl.discover() // this is slow ~250ms
     res.send(JSON.stringify(devices, 0, 2))
@@ -91,7 +111,6 @@ app.get('/devices', async (req, res) => {
 })
 
 app.get('/controls/:deviceIdentifier', async (req, res) => {
-    console.log('controls', req.params.deviceIdentifier)
     let cam
     try {
         cam = await getCameraByIdentifier(req.params.deviceIdentifier)
@@ -102,12 +121,11 @@ app.get('/controls/:deviceIdentifier', async (req, res) => {
         res.status(500).send(err)
         return
     }
- 
+
 
 })
 
 app.get('/get/:deviceIdentifier/:control', async (req, res) => {
-    console.log('getting', req.params.control)
     try {
         const cam = await getCameraByIdentifier(req.params.deviceIdentifier)
         await timeoutPromise(120)
