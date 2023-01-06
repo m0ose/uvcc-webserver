@@ -6,8 +6,8 @@ A webserver to change camera settings that supports multiple cameras and differe
 
 * Get device list `http://localhost:3456/devices`
 * Get supported controls, values, and ranges `http://localhost:3456/controls/4057`
-  *This is for the elgato camera whose vendorID is 4057. It may be different for different cameras.
+  * This is for the elgato camera whose vendorID is 4057. It may be different for different cameras.
 * Get the brightness `http://localhost:3456/get/4057/brightness`.
-* Get the brightness `http://localhost:3456/set/4057/brightness/10`.
+* Set the brightness `http://localhost:3456/set/4057/brightness/10`.
   * TODO turn this into a post request.
 
