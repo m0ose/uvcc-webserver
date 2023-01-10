@@ -10,14 +10,14 @@ export async function getAllControls(cam) {
     for (let i in sc) {
         const ctl = sc[i]
         const v = { i, ctl }
-        const val = await cam.get(ctl)
-        v.val = val
-        try {
-            const range = await cam.range(ctl)
-            v.range = range
-        } catch (err) {
-            console.log('range request not supported, ', ctl)
-        }
+        // const val = await cam.get(ctl)
+        // v.val = val
+        // try {
+        //     const range = await cam.range(ctl)
+        //     v.range = range
+        // } catch (err) {
+        //     console.log('range request not supported, ', ctl)
+        // }
         result.push(v)
     }
     return result

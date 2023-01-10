@@ -18,5 +18,7 @@ A webserver to change camera settings that supports multiple cameras and differe
 * Windows: 
   * Install [https://zadig.akeo.ie/](https://zadig.akeo.ie/)
   * `npm install`
+  * NOTE: This does not seem to be working. 
+    * python cv2 can set all of these values on windows, so we could use that. 
 
-  
+

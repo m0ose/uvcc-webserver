@@ -94,6 +94,7 @@ app.get('/get/:deviceIdentifier/:control', async (req, res) => {
         const retVals = await cam.get(req.params.control)
         res.send(retVals)
     } catch (err) {
+        console.error(err)
         res.status(500).send(err)
     }
 })
@@ -113,6 +114,7 @@ app.get('/set/:deviceIdentifier/:control/:values', async (req, res) => {
         const retVals = await cam.set(req.params.control, values)
         res.send(retVals)
     } catch (err) {
+        console.error(err)
         res.status(500).send(err)
     }
 })
