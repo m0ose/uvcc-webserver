@@ -11,3 +11,12 @@ A webserver to change camera settings that supports multiple cameras and differe
 * Set the brightness `http://localhost:3456/set/4057/brightness/10`.
   * TODO turn this into a post request.
 
+
+## Installation:
+* Linux: `ypm install`
+* Mac: `npm install`
+* Windows: 
+  * Install [https://zadig.akeo.ie/](https://zadig.akeo.ie/)
+  * `npm install`
+
+  
