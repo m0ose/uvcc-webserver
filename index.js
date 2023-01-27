@@ -7,12 +7,15 @@
 
 import { timeoutPromise, getAllControls, getAllRanges, getInfoAndRange } from './utils.js'
 import express from 'express'
+import cors from 'cors'
 import UVCControl from 'uvc-control'
 
+console.log('starting server', cors)
 /**
  * state variables
  */
 const app = express()
+app.use(cors())
 const cameras = []
 
 /**
@@ -123,11 +126,6 @@ app.get('/get/:deviceIdentifier/:control', async (req, res) => {
         console.error(err)
         res.status(500).send(err)
     }
-})
-
-app.post('/boo', async (req, res) => {
-    console.log('booooo')
-    res.send("hello")
 })
 
 // TODO make this a POST instead. It doesn't seem to get called with post
