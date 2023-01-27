@@ -4,7 +4,7 @@
   "description": "A web server to control webcam settings on any platform",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js"
+    "start": "node index.js"
   },
   "keywords": [
     "usb",

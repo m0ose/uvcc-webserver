@@ -5,7 +5,7 @@
  */
 
 
-import { timeoutPromise, getAllControls } from './utils.js'
+import { timeoutPromise, getAllControls, getAllRanges, getInfoAndRange } from './utils.js'
 import express from 'express'
 import UVCControl from 'uvc-control'
 
@@ -73,6 +73,32 @@ app.get('/devices', async (req, res) => {
     res.send(devices)
     console.timeEnd('devices')
 })
+
+app.get('/info/:deviceIdentifier', async (req, res) => {
+    let cam
+    try {
+        cam = await getCameraByIdentifier(req.params.deviceIdentifier)
+        const ranges = await getAllRanges(cam)
+        res.send(ranges)
+    } catch (err) {
+        console.error(err)
+        res.status(500).send(err)
+        return
+    }
+})
+
+app.get('/info/:deviceIdentifier/:control', async (req, res) => {
+    let cam
+    try {
+        cam = await getCameraByIdentifier(req.params.deviceIdentifier)
+        const info = await getInfoAndRange(cam, req.params.control)
+        res.send(info)
+    } catch (err) {
+        console.error(err)
+        res.status(500).send(err)
+    }
+})
+
 
 app.get('/controls/:deviceIdentifier', async (req, res) => {
     let cam
