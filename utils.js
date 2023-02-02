@@ -1,3 +1,6 @@
+import UVCControl from 'uvc-control'
+
+
 /**
  * Get the value and range of the supported controls. 
  * 
@@ -28,29 +31,35 @@ export async function getAllRanges(cam) {
         const ctl = sc[i]
         const v = { i, ctl }
         const infoAndRange = await getInfoAndRange(cam, ctl)
-        result.push({...v, ...infoAndRange})
+        result.push({ ...v, ...infoAndRange })
     }
     return result
 }
 
 export async function getInfoAndRange(cam, control) {
-    const v = { }
-    const val = await cam.get(control)
-    v.val = val
-    try {
-        const range = await cam.range(control)
-        v.range = range
+    const v = {}
+    try{
+        const val = await cam.get(control)
+        v.val = val
     } catch (err) {
-        v.range = 'not supported'
-        console.log('range request not supported, ', control)
+        console.log('get request not supported, ', control, err)
     }
     try {
         const info = await cam.getInfo(control)
         v.info = info
-    } catch(err) {
-        v.info = 'not supported'
-        console.log('info request not supported, ', control)
+    } catch (err) {
+        console.log('info request not supported, ', control, err)
     }
+    // If info is not supported then a range request will lock it up
+    if (v.info) {
+        try {
+            const range = await cam.range(control)
+            v.range = range
+        } catch (err) {
+            console.log('range request not supported, ', control, err)
+        }
+    }
+
     return v
 }
 

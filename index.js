@@ -27,9 +27,9 @@ const cameras = []
 */
 async function getCameraByIdentifier(identifier) {
     // check cached cameras
-    const existingCam = cameras.findLast(x => {
+    const existingCam = cameras.find(x => {
         const d = x.device
-        if (d.name == identifier) return true
+        if (d.name.includes( identifier)) return true
         if (d.deviceAddress == identifier) return true
         if (d.deviceDescriptor.idVendor == identifier) return true
         return false
@@ -47,7 +47,6 @@ async function getCameraByIdentifier(identifier) {
         if (d.name.includes(identifier)) return true
         if (d.deviceAddress == identifier) return true
         if (d.deviceDescriptor.idVendor == identifier) return true
-        
         return false
     })
     if (!device) {
