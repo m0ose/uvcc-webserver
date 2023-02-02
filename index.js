@@ -44,9 +44,10 @@ async function getCameraByIdentifier(identifier) {
         throw ('No Cameras found')
     }
     let device = devices.findLast(d => {
-        if (d.name == identifier) return true
+        if (d.name.includes(identifier)) return true
         if (d.deviceAddress == identifier) return true
         if (d.deviceDescriptor.idVendor == identifier) return true
+        
         return false
     })
     if (!device) {
