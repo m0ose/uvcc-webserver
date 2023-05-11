@@ -17,7 +17,7 @@ console.log('starting server', cors)
 const app = express()
 app.use(cors())
 const cameras = []
-
+const TOTALLY_UNSUPPORTED = ['OBSBOT Tiny 4K']
 /**
  * Get camera by either name, adress, or vendor ID
  * Cache cameras because making them is expensive.
@@ -45,13 +45,20 @@ async function getCameraByIdentifier(identifier) {
     }
     let device = devices.findLast(d => {
         if (d.name.includes(identifier)) return true
+        if(identifier.includes(d.name)) return true
         if (d.deviceAddress == identifier) return true
         if (d.deviceDescriptor.idVendor == identifier) return true
         return false
     })
     if (!device) {
-        console.warn('device not found. Returning default', identifier)
-        device = devices[0]
+        throw('device not found')
+        // return
+        // device = devices[0]
+    }
+    const isUnsupported = TOTALLY_UNSUPPORTED.find(x => device.name.includes(x))
+    if(isUnsupported){
+        console.warn('device is unsupported', device.name)
+        throw('device is unsupported')
     }
     const vid = device.deviceDescriptor.idVendor
     const pid = device.deviceDescriptor.idProduct

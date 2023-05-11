@@ -43,6 +43,11 @@ export async function getInfoAndRange(cam, control) {
         v.val = val
     } catch (err) {
         console.log('get request not supported, ', control, err)
+        if(err.error.toString() == 'Error: Device is not open'){
+            console.log('device not open, opening')
+            await cam.device.open()
+            console.log('device open')
+        }
     }
     try {
         const info = await cam.getInfo(control)
